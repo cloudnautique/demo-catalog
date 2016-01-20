@@ -5,7 +5,7 @@
     Galera Cluster based on MariaDB 10.0.22
   uuid: galeradb-0
   questions:
-    - varaible: "mysql_root_password"
+    - variable: "mysql_root_password"
       type: string
       required: true
       label: "MySQL Root Password"
