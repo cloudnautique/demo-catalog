@@ -1,0 +1,28 @@
+.catalog:
+  name: "Drone IO"
+  version: 0.4-rancher1
+  description: |
+    Drone IO CI server
+  uuid: droneio-0
+  question:
+    - variable: remote_driver
+      type: string
+      required: true
+      label: "Git Repo Soure"
+      description: |
+        "Which Git provider should be used for oauth"
+    - variable: database_driver
+      type: string
+      required: true
+      label: "Database"
+      description: |
+        "Database backend"
+drone-server:
+  scale: 1
+  metadata:
+    remote_driver: ${remote_driver}
+    remote_config: "https://github.com?client_id=812419da4d8c2b95e76e&client_secret=b328df98e688757e868cc536ec163c5abaed28a4"
+    database_driver: ${database_driver}
+    database_config: "drone:password@tcp(mysqldb:3306)/drone?parseTime=true"
+    http_proxy_on: false
+    debug: true
