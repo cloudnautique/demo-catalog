@@ -1,0 +1,45 @@
+version: '2'
+services:
+  training-lb:
+    image: rancher/lb-service-haproxy:v0.6.2
+    ports:
+     - 80:80/tcp
+    labels:
+      io.rancher.scheduler.global: 'true'
+      io.rancher.container.create_agent: 'true'
+      io.rancher.container.agent.role: environmentAdmin
+    lb_config:
+      port_rules:
+        - source_port: 80
+          selector: training=class
+          protocol: http
+  {{- range $idx, $e := until 4 }}
+  training-{{$idx}}:
+    image: cloudnautique/hello-world:light
+    links:
+      - training-mysql-{{$idx}}:database
+    labels:
+      training: "class"
+    lb_config:
+      port_rules:
+        - target_port: 80
+          hostname: training-{{$idx}}.cloudnautique.com
+  training-mysql-{{$idx}}:
+    image: mariadb
+    environment:
+      MYSQL_ROOT_PASSWORD: "passW0rd{{$idx}}"
+  {{- end }}
+.catalog:
+  name: Training Class
+  version: v0.0.1
+  minimum_rancher_version: v1.5.0-rc1
+  questions:
+    - variable: PARTICIPANTS
+      label: "Number of participant Stacks Needed"
+      required: true
+      default: 1
+      type: int
+    - variable: DOMAIN_SUFFIX
+      label: "Suffix for Domain Names"
+      required: true
+      type: string
